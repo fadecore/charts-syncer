@@ -118,6 +118,12 @@ func (r *Repo) Upload(file string, _ *chart.Metadata) error {
 		}
 		client = &http.Client{Transport: tr}
 	}
+	r.once.Do(func() {
+		r.transport = &http.Transport{
+			DisableCompression: true,
+			Proxy:              http.ProxyFromEnvironment,
+		}
+	})
 	res, err := client.Do(req)
 	if err != nil {
 		return errors.Annotatef(err, "uploading %q chart", file)
