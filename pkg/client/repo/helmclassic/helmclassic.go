@@ -53,6 +53,12 @@ var reloadIndex = func(r *Repo) error {
 		}
 		client = &http.Client{Transport: tr}
 	}
+	r.once.Do(func() {
+		r.transport = &http.Transport{
+			DisableCompression: true,
+			Proxy:              http.ProxyFromEnvironment,
+		}
+	})
 	res, err := client.Do(req)
 	if err != nil {
 		return errors.Annotate(err, "fetching index.yaml")
@@ -185,6 +191,12 @@ func (r *Repo) Fetch(name string, version string) (string, error) {
 		}
 		client = &http.Client{Transport: tr}
 	}
+	r.once.Do(func() {
+		r.transport = &http.Transport{
+			DisableCompression: true,
+			Proxy:              http.ProxyFromEnvironment,
+		}
+	})
 	res, err := client.Do(req)
 	if err != nil {
 		return "", errors.Annotatef(err, "fetching %s:%s chart", name, version)

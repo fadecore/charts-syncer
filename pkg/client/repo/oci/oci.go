@@ -126,6 +126,12 @@ func (r *Repo) getTagManifest(name, version string) (*ocispec.Manifest, error) {
 		}
 		client = &http.Client{Transport: tr}
 	}
+	r.once.Do(func() {
+		r.transport = &http.Transport{
+			DisableCompression: true,
+			Proxy:              http.ProxyFromEnvironment,
+		}
+	})
 	resp, err := client.Do(req)
 	if err != nil {
 		return nil, errors.Trace(err)
@@ -190,6 +196,12 @@ func (r *Repo) ListChartVersions(name string) ([]string, error) {
 		}
 		client = &http.Client{Transport: tr}
 	}
+	r.once.Do(func() {
+		r.transport = &http.Transport{
+			DisableCompression: true,
+			Proxy:              http.ProxyFromEnvironment,
+		}
+	})
 	resp, err := client.Do(req)
 	if err != nil {
 		return nil, errors.Trace(err)
@@ -271,6 +283,12 @@ func (r *Repo) Fetch(name string, version string) (string, error) {
 		}
 		client = &http.Client{Transport: tr}
 	}
+	r.once.Do(func() {
+		r.transport = &http.Transport{
+			DisableCompression: true,
+			Proxy:              http.ProxyFromEnvironment,
+		}
+	})
 	res, err := client.Do(req)
 	if err != nil {
 		return "", errors.Annotatef(err, "fetching %s:%s chart", name, version)

@@ -18,6 +18,12 @@ func newDockerResolver(u *url.URL, username, password string, insecure bool) rem
 			},
 		}
 	}
+	client.once.Do(func() {
+		client.transport = &http.Transport{
+			DisableCompression: true,
+			Proxy:              http.ProxyFromEnvironment,
+		}
+	})
 	opts := docker.ResolverOptions{
 		Hosts: func(s string) ([]docker.RegistryHost, error) {
 			return []docker.RegistryHost{
